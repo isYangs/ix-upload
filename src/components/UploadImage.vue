@@ -50,7 +50,6 @@ export default {
         },
     },
     mounted() {
-        console.log('secret',secret);
         let token = localStorage.getItem('token');
         if (token) {
             this.input = secret.decrypt(token);
