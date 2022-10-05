@@ -34,8 +34,8 @@
 
 <script>
 import 'element-ui/lib/theme-chalk/index.css';
-import { encrypt, decrypt } from './utils/secret/index';
 import Upload from './components/UploadPic.vue';
+
 export default {
     name: 'App',
     components: { Upload },
@@ -46,7 +46,7 @@ export default {
             isEdit: false,
             setConfig: {
                 config: {
-                    token: encrypt(this.input),
+                    token: this.$encrypt(this.input),
                 },
                 expires: Date.now() + 10000,
             },
@@ -62,7 +62,7 @@ export default {
         },
         save() {
             this.isEdit = false;
-            this.setConfig.config.token = encrypt(this.input);
+            this.setConfig.config.token = this.$encrypt(this.input);
             this.setConfig.expires = Date.now() + 10000;
         },
         cancel() {
@@ -80,13 +80,11 @@ export default {
         setConfig: {
             deep: true,
             handler(val) {
-                console.log('val', val);
                 localStorage.setItem('[USER_TOKEN]', JSON.stringify(val));
             },
         },
     },
     beforeDestroy() {
-        // 判断LocalStorage是否过期
         if (this.setConfig.expires < Date.now()) {
             localStorage.removeItem('[USER_TOKEN]');
         }
@@ -94,7 +92,7 @@ export default {
     mounted() {
         if (localStorage.getItem('[USER_TOKEN]')) {
             this.setConfig = JSON.parse(localStorage.getItem('[USER_TOKEN]'));
-            this.input = decrypt(this.setConfig.config.token);
+            this.input = this.$decrypt(this.setConfig.config.token);
         }
     },
 };
@@ -117,7 +115,6 @@ export default {
         margin-left: 10px;
     }
 }
-
 .upload {
     margin-top: 10px;
 }
