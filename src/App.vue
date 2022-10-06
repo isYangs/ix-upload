@@ -118,10 +118,10 @@ export default {
 .upload {
     margin-top: 10px;
 }
-/deep/ .el-upload {
+::v-deep .el-upload {
     width: 100%;
 }
-/deep/ .el-upload-dragger {
+::v-deep .el-upload-dragger {
     width: 100%;
 }
 </style>
