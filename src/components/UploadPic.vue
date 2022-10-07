@@ -148,8 +148,8 @@ export default {
                 .catch(e => e);
         },
         viewImage(index) {
-            this.dialogVisible = true;
             this.previewImage = this.file[index].url;
+            this.dialogVisible = true;
         },
     },
     computed: {
