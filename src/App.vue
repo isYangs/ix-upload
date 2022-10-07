@@ -27,7 +27,6 @@
             </el-col>
             <el-col :span="12" :offset="6">
                 <Upload
-                    :setConfig="setConfig"
                     :size="size"
                     :limit="limit"
                     :type="type"
@@ -51,12 +50,6 @@ export default {
             input: '',
             inputText: '请编辑用户Token',
             isEdit: false,
-            setConfig: {
-                config: {
-                    token: this.$encrypt(this.input),
-                },
-                expires: Date.now() + 10000,
-            },
             url: 'https://i.xuewuzhibu.cn/api/v1/upload',
             headers: {
                 Accept: 'application/json',
@@ -86,7 +79,6 @@ export default {
             });
         },
         save() {
-            // 判断edit是否为空
             if (this.input === '') {
                 this.$message({
                     message: '请输入Token在保存',
@@ -95,8 +87,7 @@ export default {
                 return;
             }
             this.isEdit = false;
-            this.setConfig.config.token = this.$encrypt(this.input);
-            this.setConfig.expires = Date.now() + 10000;
+            this.$storage.set('config', { token: this.$encrypt(this.input) });
         },
         cancel() {
             this.isEdit = false;
@@ -109,26 +100,10 @@ export default {
             console.log(file);
         },
     },
-    watch: {
-        setConfig: {
-            deep: true,
-            handler(val) {
-                localStorage.setItem('[USER_TOKEN]', JSON.stringify(val));
-                this.headers.Authorization = `Bearer ${this.$decrypt(
-                    val.config.token
-                )}`;
-            },
-        },
-    },
-    beforeDestroy() {
-        if (this.setConfig.expires < Date.now()) {
-            localStorage.removeItem('[USER_TOKEN]');
-        }
-    },
     mounted() {
-        if (localStorage.getItem('[USER_TOKEN]')) {
-            this.setConfig = JSON.parse(localStorage.getItem('[USER_TOKEN]'));
-            this.input = this.$decrypt(this.setConfig.config.token);
+        if (this.$storage.get('config', false)) {
+            const token = this.$storage.get('config', false).token;
+            this.input = this.$decrypt(token);
         }
     },
 };

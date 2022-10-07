@@ -58,10 +58,6 @@
 export default {
     name: 'UploadPic',
     props: {
-        setConfig: {
-            type: Object,
-            require: true,
-        },
         limit: {
             type: Number,
             default: 5,

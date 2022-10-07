@@ -16,6 +16,7 @@ import {
 } from 'element-ui';
 import './assets/css/reset.css';
 import { encrypt, decrypt } from './utils/secret';
+import { storage } from './utils/storage';
 
 Vue.config.productionTip = false;
 Vue.use(Row);
@@ -33,6 +34,7 @@ Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$message = Message;
 Vue.prototype.$encrypt = encrypt;
 Vue.prototype.$decrypt = decrypt;
+Vue.prototype.$storage = storage;
 
 new Vue({
     render: h => h(App),
