@@ -26,7 +26,14 @@
                 </el-button>
             </el-col>
             <el-col :span="12" :offset="6">
-                <Upload :setConfig="setConfig" />
+                <Upload
+                    :setConfig="setConfig"
+                    :size="size"
+                    :limit="limit"
+                    :type="type"
+                    :url="url"
+                    :headers="headers"
+                />
             </el-col>
         </el-row>
     </div>
@@ -50,6 +57,24 @@ export default {
                 },
                 expires: Date.now() + 10000,
             },
+            url: 'https://i.xuewuzhibu.cn/api/v1/upload',
+            headers: {
+                Accept: 'application/json',
+                Authorization: '',
+            },
+            limit: 5,
+            size: 50, // 单位为mb
+            type: [
+                'jpg',
+                'jpeg',
+                'png',
+                'gif',
+                'bmp',
+                'webp',
+                'psd',
+                'tif',
+                'ico',
+            ],
         };
     },
     methods: {
@@ -61,6 +86,14 @@ export default {
             });
         },
         save() {
+            // 判断edit是否为空
+            if (this.input === '') {
+                this.$message({
+                    message: '请输入Token在保存',
+                    type: 'warning',
+                });
+                return;
+            }
             this.isEdit = false;
             this.setConfig.config.token = this.$encrypt(this.input);
             this.setConfig.expires = Date.now() + 10000;
@@ -81,6 +114,9 @@ export default {
             deep: true,
             handler(val) {
                 localStorage.setItem('[USER_TOKEN]', JSON.stringify(val));
+                this.headers.Authorization = `Bearer ${this.$decrypt(
+                    val.config.token
+                )}`;
             },
         },
     },

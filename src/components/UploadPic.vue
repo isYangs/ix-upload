@@ -5,8 +5,7 @@
             multiple
             list-type="picture"
             :show-file-list="false"
-            :limit="limit"
-            :action="uploadFileUrl"
+            :action="url"
             :auto-upload="false"
             :headers="headers"
             :on-preview="handlePreview"
@@ -25,7 +24,7 @@
                 <em>点击上传</em>
             </div>
             <div class="el-upload__tip" slot="tip">
-                只能上传jpg/png文件，且不超过500kb
+                只能上传{{ limitType }}文件，且不超过{{ size }}MB
             </div>
         </el-upload>
         <ul class="upload__file_list">
@@ -63,29 +62,31 @@ export default {
             type: Object,
             require: true,
         },
+        limit: {
+            type: Number,
+            default: 5,
+        },
+        size: {
+            type: Number,
+            require: true,
+        },
+        type: {
+            type: Array,
+            require: true,
+        },
+        url: {
+            type: String,
+            require: true,
+        },
+        headers: {
+            type: Object,
+            require: true,
+        },
     },
     data() {
         return {
-            limit: 5,
             loading: false,
-            uploadFileUrl: 'https://i.xuewuzhibu.cn/api/v1/upload',
-            headers: {
-                Accept: 'application/json',
-                Authorization:
-                    'Bearer ' + this.$decrypt(this.setConfig.config.token),
-            },
             fileList: [],
-            fileType: [
-                '.jpg',
-                '.jpeg',
-                '.png',
-                '.gif',
-                '.bmp',
-                '.webp',
-                '.psd',
-                '.tif',
-                '.ico',
-            ],
             dialogVisible: false,
             file: [],
             previewImage: '',
@@ -93,9 +94,26 @@ export default {
     },
     methods: {
         handleChange(file) {
+            if (!localStorage.getItem('[USER_TOKEN]')) {
+                this.$message.error('请先填写Token');
+                return;
+            }
+            // 按照mb计算
+            const fileSize = file.size / 1024 / 1024;
+            if (fileSize > this.size) {
+                this.$message.error('上传文件不能超过' + this.size + 'MB');
+                return;
+            }
+
+            if (this.file.length >= this.limit) {
+                this.$message.error('上传文件不能超过' + this.limit + '个');
+                return;
+            }
+
             let fileName = file.name;
             let fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
-            if (this.fileType.indexOf(fileSuffix.toLowerCase()) === -1) {
+            let fileType = this.type.map(item => '.' + item);
+            if (fileType.indexOf(fileSuffix.toLowerCase()) === -1) {
                 this.$message.error('上传文件类型不符合');
                 return false;
             }
@@ -124,7 +142,6 @@ export default {
                 type: 'warning',
             })
                 .then(() => {
-                    // 在file中删除
                     let index = this.file.indexOf(file);
                     this.file.splice(index, 1);
                     this.$message({
@@ -141,7 +158,11 @@ export default {
     },
     computed: {
         accept() {
-            return this.fileType.join(',');
+            let fileType = this.type.map(item => '.' + item);
+            return fileType.join(',');
+        },
+        limitType() {
+            return this.type.join('/');
         },
     },
 };
