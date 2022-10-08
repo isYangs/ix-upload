@@ -13,16 +13,11 @@
                     查看
                 </el-button>
             </div>
-            <el-dialog
-                title="查看图片"
-                :visible.sync="dialogVisible"
-                :width="dialogWidth"
-                :key="dialogKey"
-            >
-                <img :src="previewImage" alt="" />
-            </el-dialog>
             <i class="el-icon-close" @click="remove(item)"></i>
         </li>
+        <el-dialog title="查看图片" :visible.sync="dialogVisible" width="45%">
+            <img :src="previewImage" alt="" />
+        </el-dialog>
     </ul>
 </template>
 
@@ -39,7 +34,6 @@ export default {
         return {
             dialogVisible: false,
             previewImage: '',
-            dialogWidth: '50%',
             file: this.fileData,
         };
     },
@@ -64,19 +58,6 @@ export default {
             console.log(file);
             this.previewImage = this.file[index].url;
             this.dialogVisible = true;
-        },
-    },
-    watch: {
-        fileData() {
-            this.file = this.fileData.map(item => {
-                item.key = this.$nanoid();
-                return item;
-            });
-        },
-    },
-    computed: {
-        dialogKey() {
-            return this.dialogVisible ? this.$nanoid() : '';
         },
     },
 };
@@ -128,17 +109,17 @@ export default {
             right: 5px;
             cursor: pointer;
         }
-        .el-dialog {
+    }
+    .el-dialog {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
+            object-fit: contain;
         }
     }
 }
