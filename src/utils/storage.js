@@ -19,7 +19,6 @@ export const storage = {
             return def;
         }
         storage = JSON.parse(storage);
-        console.log('storage', storage);
         if (storage.expires < new Date().getTime()) {
             this.remove(key);
             return def;
