@@ -17,7 +17,6 @@ import {
 import './assets/css/reset.css';
 import { encrypt, decrypt } from './utils/secret';
 import { storage } from './utils/storage';
-import { nanoid } from 'nanoid';
 
 Vue.config.productionTip = false;
 Vue.use(Row);
@@ -36,7 +35,6 @@ Vue.prototype.$message = Message;
 Vue.prototype.$encrypt = encrypt;
 Vue.prototype.$decrypt = decrypt;
 Vue.prototype.$storage = storage;
-Vue.prototype.$nanoid = nanoid;
 
 new Vue({
     render: h => h(App),
