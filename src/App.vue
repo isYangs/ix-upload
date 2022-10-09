@@ -104,8 +104,9 @@ export default {
     },
     mounted() {
         if (this.$store.get('config', false)) {
-            const token = this.$store.get('config', false).token;
-            this.input = this.$decrypt(token);
+            let token = this.$store.get('config', false).token;
+            token = this.$decrypt(token);
+            this.input = token.replace('Bearer ', '');
         }
     },
 };
