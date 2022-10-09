@@ -87,7 +87,9 @@ export default {
                 return;
             }
             this.isEdit = false;
-            this.$store.set('config', { token: this.$encrypt(this.input) });
+            this.$store.set('config', {
+                token: this.$encrypt('Bearer ' + this.input),
+            });
         },
         cancel() {
             this.isEdit = false;
