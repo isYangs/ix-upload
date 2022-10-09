@@ -8,8 +8,10 @@
             <img :src="item.url" alt="" class="upload__file_list_thumbnail" />
             <span class="upload__file_list_name">{{ item.name }}</span>
             <div class="upload__file_list_btn_group">
-                <el-button type="text">上传</el-button>
-                <el-button type="text" @click="viewImage(index, file)">
+                <el-button type="text" @click="upLoadPic(index)">
+                    上传
+                </el-button>
+                <el-button type="text" @click="viewImage(index)">
                     查看
                 </el-button>
             </div>
@@ -22,6 +24,8 @@
 </template>
 
 <script>
+import { upload } from '@/api';
+console.log(upload);
 export default {
     name: 'FileList',
     props: {
@@ -38,6 +42,22 @@ export default {
         };
     },
     methods: {
+        // 查看图片
+        viewImage(index) {
+            this.previewImage = this.file[index].url;
+            this.dialogVisible = true;
+        },
+        // 上传图片
+        upLoadPic(index) {
+            console.log(index);
+            // const formData = new FormData();
+            // console.log(formData.append('file', this.file[index].raw));
+            // console.log(this.file[index].raw);
+            // upload.uploadPic({ file: 'aaa' }).then(res => {
+            //     console.log(res);
+            // });
+        },
+        // 删除图片
         remove(file) {
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                 confirmButtonText: '确定',
@@ -53,11 +73,6 @@ export default {
                     });
                 })
                 .catch(e => e);
-        },
-        viewImage(index, file) {
-            console.log(file);
-            this.previewImage = this.file[index].url;
-            this.dialogVisible = true;
         },
     },
 };

@@ -109,10 +109,12 @@ export default {
         },
     },
     computed: {
+        // 遍历文件类型
         accept() {
             let fileType = this.type.map(item => '.' + item);
             return fileType.join(',');
         },
+        // 拼接文件类型
         limitType() {
             return this.type.join('/');
         },
