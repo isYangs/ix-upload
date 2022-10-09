@@ -25,7 +25,6 @@
 
 <script>
 import { upload } from '@/api';
-console.log(upload);
 export default {
     name: 'FileList',
     props: {
@@ -49,13 +48,12 @@ export default {
         },
         // 上传图片
         upLoadPic(index) {
-            console.log(index);
-            // const formData = new FormData();
-            // console.log(formData.append('file', this.file[index].raw));
-            // console.log(this.file[index].raw);
-            // upload.uploadPic({ file: 'aaa' }).then(res => {
-            //     console.log(res);
-            // });
+            this.files = [];
+            this.files.push(this.file[index].raw);
+            console.log(this.files);
+            upload.uploadPic({ file: this.files[index] }).then(res => {
+                console.log(res);
+            });
         },
         // 删除图片
         remove(file) {
