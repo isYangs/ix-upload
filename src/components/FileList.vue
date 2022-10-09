@@ -68,6 +68,7 @@ export default {
                     this.$message({
                         type: 'success',
                         message: '删除成功!',
+                        center: true,
                     });
                 })
                 .catch(e => e);
