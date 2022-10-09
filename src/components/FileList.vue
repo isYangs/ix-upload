@@ -1,23 +1,34 @@
 <template>
     <ul class="upload__file_list">
-        <li
-            class="upload__file_item"
+        <div
             v-for="(item, index) in file"
+            :class="`upload_file_item list__item_${index}`"
             :key="index"
         >
-            <img :src="item.url" alt="" class="upload__file_list_thumbnail" />
-            <span class="upload__file_list_name">{{ item.name }}</span>
-            <div class="upload__file_list_btn_group">
-                <el-button type="text" @click="upLoadPic(index)">
-                    上传
-                </el-button>
-                <el-button type="text" @click="viewImage(index)">
-                    查看
-                </el-button>
-            </div>
-            <i class="el-icon-close" @click="remove(item)"></i>
-        </li>
-        <el-dialog title="查看图片" :visible.sync="dialogVisible" width="45%">
+            <li class="upload__file_item">
+                <img
+                    :src="item.url"
+                    alt=""
+                    class="upload__file_list_thumbnail"
+                />
+                <span class="upload__file_list_name">{{ item.name }}</span>
+                <div class="upload__file_list_btn_group">
+                    <el-button type="text" @click="upLoadPic(index)">
+                        上传
+                    </el-button>
+                    <el-button type="text" @click="viewImage(index)">
+                        查看
+                    </el-button>
+                </div>
+                <i class="el-icon-close" @click="remove(item)"></i>
+            </li>
+        </div>
+        <el-dialog
+            title="查看图片"
+            :visible.sync="dialogVisible"
+            v-if="dialogVisible"
+            width="45%"
+        >
             <img :src="previewImage" alt="" />
         </el-dialog>
     </ul>
@@ -25,6 +36,7 @@
 
 <script>
 import { upload } from '@/api';
+import { Loading } from 'element-ui';
 export default {
     name: 'FileList',
     props: {
@@ -35,9 +47,11 @@ export default {
     },
     data() {
         return {
+            loading: true,
             dialogVisible: false,
             previewImage: '',
             file: this.fileData,
+            fileList: [],
         };
     },
     methods: {
@@ -48,11 +62,29 @@ export default {
         },
         // 上传图片
         upLoadPic(index) {
+            let loadingInstance = Loading.service({
+                lock: true,
+                text: '上传中...',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                target: document.querySelector(`.list__item_${index}`),
+            });
             const files = [];
             files.push(this.file[index].raw);
-            console.log(files);
             upload.uploadPic({ file: files[index] }).then(res => {
-                console.log(res);
+                this.fileList.push({
+                    name: res.data.name,
+                    url: res.data.links.url,
+                });
+                this.uploadSuccess = setTimeout(() => {
+                    loadingInstance.close();
+                    this.$message({
+                        type: 'success',
+                        message: '上传成功',
+                        duration: 4000,
+                        center: true,
+                    });
+                }, 1000);
             });
         },
         // 删除图片
@@ -68,11 +100,15 @@ export default {
                     this.$message({
                         type: 'success',
                         message: '删除成功!',
+                        duration: 2000,
                         center: true,
                     });
                 })
                 .catch(e => e);
         },
+    },
+    beforeDestroy() {
+        clearTimeout(this.uploadSuccess);
     },
 };
 </script>
@@ -84,44 +120,51 @@ export default {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
-    .upload__file_item {
+    .upload_file_item {
         width: 100%;
         height: 100%;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        position: relative;
-        display: flex;
-        align-items: center;
         margin-top: 10px;
+        box-sizing: border-box;
 
-        .upload__file_list_thumbnail {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
+        .upload__file_item {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
             border-radius: 5px;
-        }
+            padding: 10px 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
 
-        .upload__file_list_name {
-            width: 100px;
-            margin-left: 10px;
-            font-size: 14px;
-            color: #333;
-            margin-right: auto;
-            //溢出省略号
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+            .upload__file_list_thumbnail {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 5px;
+                margin-left: 10px;
+            }
 
-        .upload__file_list_btn_group {
-            width: 100px;
-        }
-        i {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
+            .upload__file_list_name {
+                width: 100px;
+                margin-left: 10px;
+                font-size: 14px;
+                color: #333;
+                margin-right: auto;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .upload__file_list_btn_group {
+                width: 100px;
+            }
+            i {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                cursor: pointer;
+            }
         }
     }
     .el-dialog {
