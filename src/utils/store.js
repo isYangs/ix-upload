@@ -1,5 +1,5 @@
 const namespace = '[USER_TOKEN]';
-export const storage = {
+export const store = {
     set(key, value) {
         let storage = window.localStorage.getItem(namespace);
         if (!storage) {

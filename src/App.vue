@@ -87,7 +87,7 @@ export default {
                 return;
             }
             this.isEdit = false;
-            this.$storage.set('config', { token: this.$encrypt(this.input) });
+            this.$store.set('config', { token: this.$encrypt(this.input) });
         },
         cancel() {
             this.isEdit = false;
@@ -101,8 +101,8 @@ export default {
         },
     },
     mounted() {
-        if (this.$storage.get('config', false)) {
-            const token = this.$storage.get('config', false).token;
+        if (this.$store.get('config', false)) {
+            const token = this.$store.get('config', false).token;
             this.input = this.$decrypt(token);
         }
     },
