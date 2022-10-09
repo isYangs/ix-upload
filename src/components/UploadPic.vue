@@ -15,7 +15,6 @@
             :before-remove="handleRemove"
             :file-list="fileList"
             :on-change="handleChange"
-            v-loading="loading"
             :accept="accept"
         >
             <i class="el-icon-upload"></i>
@@ -60,7 +59,6 @@ export default {
     },
     data() {
         return {
-            loading: false,
             fileList: [],
             fileData: [],
         };

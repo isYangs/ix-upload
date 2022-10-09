@@ -48,10 +48,10 @@ export default {
         },
         // 上传图片
         upLoadPic(index) {
-            this.files = [];
-            this.files.push(this.file[index].raw);
-            console.log(this.files);
-            upload.uploadPic({ file: this.files[index] }).then(res => {
+            const files = [];
+            files.push(this.file[index].raw);
+            console.log(files);
+            upload.uploadPic({ file: files[index] }).then(res => {
                 console.log(res);
             });
         },

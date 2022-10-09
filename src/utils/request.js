@@ -49,7 +49,7 @@ const errorHandle = (status, other) => {
 // 创建axios实例
 const service = axios.create({
     baseURL: 'https://i.xuewuzhibu.cn/api/v1',
-    // timeout: 5000,
+    timeout: 10000 * 6,
     headers: {
         Accept: 'application/json',
     },
@@ -69,7 +69,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response =>
         response.status === 200
-            ? Promise.resolve(response)
+            ? Promise.resolve(response.data)
             : Promise.reject(response),
     error => {
         if (error.response) {
