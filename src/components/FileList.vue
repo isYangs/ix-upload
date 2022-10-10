@@ -22,7 +22,11 @@
                 </div>
                 <i class="el-icon-close" @click="remove(item)"></i>
             </li>
-            <el-table :data="tableData" style="width: 100%">
+            <el-table
+                :data="links[index]"
+                style="width: 100%"
+                empty-text="暂无图片链接，请先上传图片！"
+            >
                 <el-table-column label="格式" width="170">
                     <template slot-scope="scope">
                         <span style="margin-left: 10px">
@@ -39,11 +43,8 @@
                 </el-table-column>
                 <el-table-column label="操作" width="80">
                     <template slot-scope="scope">
-                        <el-button
-                            size="mini"
-                            @click="handleEdit(scope.$index, scope.row)"
-                        >
-                            编辑
+                        <el-button size="mini" @click="handleCopy(scope.row)">
+                            <i class="el-icon-document-copy"></i>
                         </el-button>
                     </template>
                 </el-table-column>
@@ -73,12 +74,14 @@ export default {
     },
     data() {
         return {
+            index: 0,
             loading: true,
             dialogVisible: false,
             previewImage: '',
             file: this.fileData,
             fileList: [],
             uploadResult: [],
+            links: [],
             tableData: [],
         };
     },
@@ -118,7 +121,7 @@ export default {
         uploadPic(index) {
             let loadingInstance = Loading.service({
                 lock: true,
-                text: '上传中...',
+                text: '正在拼命上传中...',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)',
                 target: document.querySelector(`.list__item_${index}`),
@@ -134,13 +137,14 @@ export default {
                         url: res.data.links.url,
                     });
                     this.uploadSuccess = setTimeout(() => {
-                        loadingInstance.close();
                         this.$message({
                             type: 'success',
                             message: '上传成功',
                             duration: 4000,
                             center: true,
                         });
+                        this.uploadData(index);
+                        loadingInstance.close();
                     }, 1000);
                 })
                 .catch(() => {
@@ -157,7 +161,6 @@ export default {
         },
         // 重复上传
         repeatUpload(index) {
-            console.log('aaaaa@');
             for (let i = 0; i < this.uploadResult.length; i++) {
                 if (
                     this.uploadResult[i].origin_name === this.file[index].name
@@ -173,17 +176,38 @@ export default {
                 }
             }
         },
-    },
-    computed: {
-        /* // 上传成功后的数据
-        uploadData() {
-            this.uploadResult.forEach(item => {
-                for (let key in item.links) {
-                    console.log(key, item.links[key]);
-                }
-            });
-            return this.tableData;
-        }, */
+        // 返回上传结果
+        uploadData(index) {
+            const uplaodData = [];
+            for (let key in this.uploadResult[index].links) {
+                let data = {};
+                data = {
+                    name: key,
+                    url: this.uploadResult[index].links[key],
+                };
+                uplaodData.push(data);
+            }
+            console.log(uplaodData);
+            this.links.push(uplaodData);
+        },
+        // 复制链接
+        handleCopy(index, row) {
+            const input = document.createElement('input');
+            input.setAttribute('readonly', 'readonly');
+            input.setAttribute('value', row.url);
+            document.body.appendChild(input);
+            input.select();
+            if (document.execCommand('copy')) {
+                document.execCommand('copy');
+                this.$message({
+                    message: '复制成功',
+                    type: 'success',
+                    duration: 2000,
+                    center: true,
+                });
+            }
+            document.body.removeChild(input);
+        },
     },
     beforeDestroy() {
         clearTimeout(this.uploadSuccess);
