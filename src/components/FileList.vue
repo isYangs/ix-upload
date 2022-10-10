@@ -22,6 +22,32 @@
                 </div>
                 <i class="el-icon-close" @click="remove(item)"></i>
             </li>
+            <el-table :data="tableData" style="width: 100%">
+                <el-table-column label="格式" width="170">
+                    <template slot-scope="scope">
+                        <span style="margin-left: 10px">
+                            {{ scope.row.name }}
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="链接">
+                    <template slot-scope="scope">
+                        <div slot="reference" class="name-wrapper">
+                            {{ scope.row.url }}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="80">
+                    <template slot-scope="scope">
+                        <el-button
+                            size="mini"
+                            @click="handleEdit(scope.$index, scope.row)"
+                        >
+                            编辑
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
         </div>
         <el-dialog
             title="查看图片"
@@ -53,6 +79,7 @@ export default {
             file: this.fileData,
             fileList: [],
             uploadResult: [],
+            tableData: [],
         };
     },
     methods: {
@@ -135,7 +162,6 @@ export default {
                 if (
                     this.uploadResult[i].origin_name === this.file[index].name
                 ) {
-                    console.log('正在执行3');
                     this.$message({
                         message: '该文件已经上传',
                         type: 'warning',
@@ -147,6 +173,17 @@ export default {
                 }
             }
         },
+    },
+    computed: {
+        /* // 上传成功后的数据
+        uploadData() {
+            this.uploadResult.forEach(item => {
+                for (let key in item.links) {
+                    console.log(key, item.links[key]);
+                }
+            });
+            return this.tableData;
+        }, */
     },
     beforeDestroy() {
         clearTimeout(this.uploadSuccess);
