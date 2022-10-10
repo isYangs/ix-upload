@@ -13,7 +13,7 @@
                 />
                 <span class="upload__file_list_name">{{ item.name }}</span>
                 <div class="upload__file_list_btn_group">
-                    <el-button type="text" @click="upLoadPic(index)">
+                    <el-button type="text" @click="upload(index)">
                         上传
                     </el-button>
                     <el-button type="text" @click="viewImage(index)">
@@ -52,6 +52,7 @@ export default {
             previewImage: '',
             file: this.fileData,
             fileList: [],
+            uploadResult: [],
         };
     },
     methods: {
@@ -61,31 +62,12 @@ export default {
             this.dialogVisible = true;
         },
         // 上传图片
-        upLoadPic(index) {
-            let loadingInstance = Loading.service({
-                lock: true,
-                text: '上传中...',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)',
-                target: document.querySelector(`.list__item_${index}`),
-            });
-            const files = [];
-            files.push(this.file[index].raw);
-            upload.uploadPic({ file: files[index] }).then(res => {
-                this.fileList.push({
-                    name: res.data.name,
-                    url: res.data.links.url,
-                });
-                this.uploadSuccess = setTimeout(() => {
-                    loadingInstance.close();
-                    this.$message({
-                        type: 'success',
-                        message: '上传成功',
-                        duration: 4000,
-                        center: true,
-                    });
-                }, 1000);
-            });
+        upload(index) {
+            if (this.fileList.length > 0) {
+                this.repeatUpload(index);
+                return;
+            }
+            this.uploadPic(index);
         },
         // 删除图片
         remove(file) {
@@ -105,6 +87,65 @@ export default {
                     });
                 })
                 .catch(e => e);
+        },
+        uploadPic(index) {
+            let loadingInstance = Loading.service({
+                lock: true,
+                text: '上传中...',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                target: document.querySelector(`.list__item_${index}`),
+            });
+            const files = [];
+            files.push(this.file[index].raw);
+            upload
+                .uploadPic({ file: files[0] })
+                .then(res => {
+                    this.uploadResult.push(res.data);
+                    this.fileList.push({
+                        name: res.data.name,
+                        url: res.data.links.url,
+                    });
+                    this.uploadSuccess = setTimeout(() => {
+                        loadingInstance.close();
+                        this.$message({
+                            type: 'success',
+                            message: '上传成功',
+                            duration: 4000,
+                            center: true,
+                        });
+                    }, 1000);
+                })
+                .catch(() => {
+                    this.uploadError = setTimeout(() => {
+                        loadingInstance.close();
+                        this.$message({
+                            type: 'error',
+                            message: '上传失败',
+                            duration: 4000,
+                            center: true,
+                        });
+                    }, 1000);
+                });
+        },
+        // 重复上传
+        repeatUpload(index) {
+            console.log('aaaaa@');
+            for (let i = 0; i < this.uploadResult.length; i++) {
+                if (
+                    this.uploadResult[i].origin_name === this.file[index].name
+                ) {
+                    console.log('正在执行3');
+                    this.$message({
+                        message: '该文件已经上传',
+                        type: 'warning',
+                        duration: 2000,
+                        center: true,
+                    });
+                } else {
+                    this.uploadPic(index);
+                }
+            }
         },
     },
     beforeDestroy() {

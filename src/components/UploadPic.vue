@@ -71,12 +71,20 @@ export default {
             }
             const fileSize = file.size / 1024 / 1024;
             if (fileSize > this.size) {
-                this.$message.error('上传文件不能超过' + this.size + 'MB');
+                this.$message({
+                    message: '上传文件大小不能超过' + this.size + 'MB!',
+                    type: 'error',
+                    center: true,
+                });
                 return;
             }
 
             if (this.fileData.length >= this.limit) {
-                this.$message.error('上传文件不能超过' + this.limit + '个');
+                this.$message({
+                    message: '上传文件数量不能超过' + this.limit + '个!',
+                    type: 'error',
+                    center: true,
+                });
                 return;
             }
 
@@ -84,7 +92,11 @@ export default {
             let fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
             let fileType = this.type.map(item => '.' + item);
             if (fileType.indexOf(fileSuffix.toLowerCase()) === -1) {
-                this.$message.error('上传文件类型不符合');
+                this.$message({
+                    message: '文件不符合上传类型',
+                    type: 'error',
+                    center: true,
+                });
                 return false;
             }
             this.fileData.push(file);
