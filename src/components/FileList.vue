@@ -36,9 +36,11 @@
                 </el-table-column>
                 <el-table-column label="链接">
                     <template slot-scope="scope">
-                        <div slot="reference" class="name-wrapper">
-                            {{ scope.row.url }}
-                        </div>
+                        <div
+                            slot="reference"
+                            class="name-wrapper"
+                            v-html="scope.row.url"
+                        ></div>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="80">
@@ -70,6 +72,10 @@ export default {
         fileData: {
             type: Array,
             default: () => [],
+        },
+        permissionValue: {
+            type: Number,
+            default: 0,
         },
     },
     data() {
@@ -129,7 +135,7 @@ export default {
             const files = [];
             files.push(this.file[index].raw);
             upload
-                .uploadPic({ file: files[0] })
+                .uploadPic({ file: files[0], permission: this.permissionValue })
                 .then(res => {
                     this.uploadResult.push(res.data);
                     this.fileList.push({
@@ -187,7 +193,6 @@ export default {
                 };
                 uplaodData.push(data);
             }
-            console.log(uplaodData);
             this.links.push(uplaodData);
         },
         // 复制链接

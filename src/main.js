@@ -15,6 +15,8 @@ import {
     Progress,
     Table,
     TableColumn,
+    Select,
+    Option,
 } from 'element-ui';
 import './assets/css/reset.css';
 import { encrypt, decrypt } from '@/utils/secret';
@@ -33,6 +35,8 @@ Vue.use(Image);
 Vue.use(Progress);
 Vue.use(Table);
 Vue.use(TableColumn);
+Vue.use(Select);
+Vue.use(Option);
 
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$message = Message;

@@ -3,15 +3,10 @@
         <el-upload
             drag
             multiple
+            :action="url"
             list-type="picture"
             :show-file-list="false"
-            :action="url"
             :auto-upload="false"
-            :headers="headers"
-            :on-preview="handlePreview"
-            :on-progress="handleProgress"
-            :on-success="handleSuccess"
-            :on-error="handleError"
             :before-remove="handleRemove"
             :file-list="fileList"
             :on-change="handleChange"
@@ -26,7 +21,15 @@
                 只能上传{{ limitType }}文件，且不超过{{ size }}MB
             </div>
         </el-upload>
-        <FileList :fileData="fileData" />
+        <el-select v-model="permissionValue" placeholder="请选择">
+            <el-option
+                v-for="item in permission"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            ></el-option>
+        </el-select>
+        <FileList :fileData="fileData" :permissionValue="permissionValue" />
     </div>
 </template>
 
@@ -48,19 +51,23 @@ export default {
             type: Array,
             require: true,
         },
-        url: {
-            type: String,
-            require: true,
-        },
-        headers: {
-            type: Object,
-            require: true,
-        },
     },
     data() {
         return {
+            url: process.env.VUE_APP_BASE_API + '/upload',
             fileList: [],
             fileData: [],
+            permission: [
+                {
+                    label: '公开',
+                    value: 1, // 根据接口文档 1 表示公开
+                },
+                {
+                    label: '私有',
+                    value: 0, // 根据接口文档 0 代表私有
+                },
+            ],
+            permissionValue: 0,
         };
     },
     methods: {
@@ -101,18 +108,6 @@ export default {
             }
             this.fileData.push(file);
         },
-        handlePreview(file) {
-            console.log(file);
-        },
-        handleProgress(event, file, fileList) {
-            console.log(event, file, fileList);
-        },
-        handleSuccess(res, file, fileList) {
-            console.log(res, file, fileList);
-        },
-        handleError(err, file, fileList) {
-            console.log(err, file, fileList);
-        },
         handleRemove(file, fileList) {
             this.fileList = fileList;
             return this.$confirm(`确定移除 ${file.name}？`);
@@ -131,3 +126,9 @@ export default {
     },
 };
 </script>
+
+<style scoped lang="less">
+.el-select {
+    margin-top: 10px;
+}
+</style>

@@ -26,13 +26,7 @@
                 </el-button>
             </el-col>
             <el-col :span="12" :offset="6">
-                <Upload
-                    :size="size"
-                    :limit="limit"
-                    :type="type"
-                    :url="url"
-                    :headers="headers"
-                />
+                <Upload :size="size" :limit="limit" :type="type" />
             </el-col>
         </el-row>
     </div>
@@ -50,11 +44,6 @@ export default {
             input: '',
             inputText: '请编辑用户Token',
             isEdit: false,
-            url: 'https://i.xuewuzhibu.cn/api/v1/upload',
-            headers: {
-                Accept: 'application/json',
-                Authorization: '',
-            },
             limit: 5,
             size: 50, // 单位为mb
             type: [
@@ -71,6 +60,7 @@ export default {
         };
     },
     methods: {
+        // 编辑
         edit() {
             this.isEdit = true;
             this.inputText = '请输入用户Token';
@@ -78,6 +68,7 @@ export default {
                 this.$refs.input.focus();
             });
         },
+        // 保存
         save() {
             if (this.input === '') {
                 this.$message({
@@ -91,15 +82,10 @@ export default {
                 token: this.$encrypt('Bearer ' + this.input),
             });
         },
+        // 取消
         cancel() {
             this.isEdit = false;
             this.inputText = '请编辑用户Token';
-        },
-        handleRemove(file) {
-            console.log(file);
-        },
-        handleDownload(file) {
-            console.log(file);
         },
     },
     mounted() {
