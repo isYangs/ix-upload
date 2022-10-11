@@ -48,7 +48,7 @@ const errorHandle = (status, other) => {
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: 'https://i.xuewuzhibu.cn/api/v1',
+    baseURL: process.env.VUE_APP_BASE_API,
     timeout: 10000 * 12,
     headers: {
         Accept: 'application/json',
