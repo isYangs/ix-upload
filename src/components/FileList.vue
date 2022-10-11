@@ -196,22 +196,35 @@ export default {
             this.links.push(uplaodData);
         },
         // 复制链接
-        handleCopy(index, row) {
-            const input = document.createElement('input');
-            input.setAttribute('readonly', 'readonly');
-            input.setAttribute('value', row.url);
-            document.body.appendChild(input);
-            input.select();
-            if (document.execCommand('copy')) {
-                document.execCommand('copy');
-                this.$message({
-                    message: '复制成功',
-                    type: 'success',
-                    duration: 2000,
-                    center: true,
-                });
+        handleCopy(row) {
+            // 判断如果复制的是html链接，把&lt;替换为<，把&gt;替换为>
+            if (row.name === 'html') {
+                let html = row.url.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                this.copy(html);
+            } else {
+                this.copy(row.url);
             }
-            document.body.removeChild(input);
+        },
+        // 复制
+        copy(data) {
+            this.$copyText(data).then(
+                () => {
+                    this.$message({
+                        message: '复制成功',
+                        type: 'success',
+                        duration: 2000,
+                        center: true,
+                    });
+                },
+                () => {
+                    this.$message({
+                        message: '复制失败',
+                        type: 'error',
+                        duration: 2000,
+                        center: true,
+                    });
+                }
+            );
         },
     },
     beforeDestroy() {

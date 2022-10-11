@@ -19,9 +19,9 @@ import {
     Option,
 } from 'element-ui';
 import './assets/css/reset.css';
+import VueClipboard from 'vue-clipboard2';
 import { encrypt, decrypt } from '@/utils/secret';
 import { store } from '@/utils/store';
-
 Vue.config.productionTip = false;
 Vue.use(Row);
 Vue.use(Col);
@@ -37,13 +37,12 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Select);
 Vue.use(Option);
-
+Vue.use(VueClipboard);
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$message = Message;
 Vue.prototype.$encrypt = encrypt;
 Vue.prototype.$decrypt = decrypt;
 Vue.prototype.$store = store;
-
 new Vue({
     render: h => h(App),
     beforeCreate() {
