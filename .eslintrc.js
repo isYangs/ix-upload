@@ -5,6 +5,9 @@ module.exports = {
         commonjs: true,
         es2021: true,
     },
+    globals: {
+        process: true,
+    },
     extends: ['plugin:vue/essential', 'prettier', 'eslint:recommended'],
     parserOptions: {
         ecmaVersion: 12,
