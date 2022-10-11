@@ -65,7 +65,6 @@
 
 <script>
 import { upload } from '@/api';
-import { Loading } from 'element-ui';
 export default {
     name: 'FileList',
     props: {
@@ -125,7 +124,7 @@ export default {
                 .catch(e => e);
         },
         uploadPic(index) {
-            let loadingInstance = Loading.service({
+            let loadingInstance = this.$loading({
                 lock: true,
                 text: '正在拼命上传中...',
                 spinner: 'el-icon-loading',

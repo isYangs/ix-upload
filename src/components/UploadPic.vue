@@ -7,7 +7,6 @@
             list-type="picture"
             :show-file-list="false"
             :auto-upload="false"
-            :before-remove="handleRemove"
             :file-list="fileList"
             :on-change="handleChange"
             :accept="accept"
@@ -21,19 +20,38 @@
                 只能上传{{ limitType }}文件，且不超过{{ size }}MB
             </div>
         </el-upload>
-        <el-select v-model="permissionValue" placeholder="请选择">
-            <el-option
-                v-for="item in permission"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            ></el-option>
-        </el-select>
+        <div class="file__list_func" v-show="fileFuncShow">
+            <el-button
+                type="primary"
+                icon="el-icon-upload"
+                @click="uploadAll"
+                plain
+            >
+                全部上传
+            </el-button>
+            <el-button
+                type="danger"
+                icon="el-icon-delete"
+                @click="deleteAll"
+                plain
+            >
+                清空列表
+            </el-button>
+            <el-select v-model="permissionValue" placeholder="请选择">
+                <el-option
+                    v-for="item in permission"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+            </el-select>
+        </div>
         <FileList :fileData="fileData" :permissionValue="permissionValue" />
     </div>
 </template>
 
 <script>
+import { upload } from '@/api';
 import FileList from './FileList.vue';
 export default {
     name: 'UploadPic',
@@ -71,6 +89,7 @@ export default {
         };
     },
     methods: {
+        // 上传文件校验并获取文件列表的数据
         handleChange(file) {
             if (!localStorage.getItem('[USER_TOKEN]')) {
                 this.$message.error('请先填写Token');
@@ -108,10 +127,38 @@ export default {
             }
             this.fileData.push(file);
         },
-        handleRemove(file, fileList) {
-            this.fileList = fileList;
-            return this.$confirm(`确定移除 ${file.name}？`);
+        // 上传全部文件
+        uploadAll() {
+            if (this.fileData.length === 0) {
+                this.$message({
+                    message: '请先选择文件',
+                    type: 'error',
+                    center: true,
+                });
+                return;
+            }
+            this.fileData.forEach(item => {
+                let loadingInstance = this.$loading({
+                    lock: true,
+                    text: '正在拼命上传中...',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    target: document.querySelector(`.upload__file_list`),
+                });
+                const files = [];
+                files.push(item.raw);
+                upload
+                    .uploadPic({
+                        file: files[0],
+                        permission: this.permissionValue,
+                    })
+                    .then(res => {
+                        console.log(res);
+                        loadingInstance.close();
+                    });
+            });
         },
+        deleteAll() {},
     },
     computed: {
         // 遍历文件类型
@@ -123,12 +170,20 @@ export default {
         limitType() {
             return this.type.join('/');
         },
+        // 是否显示文件列表功能
+        fileFuncShow() {
+            return this.fileData.length > 0;
+        },
     },
 };
 </script>
 
 <style scoped lang="less">
-.el-select {
+.file__list_func {
     margin-top: 10px;
+    .el-select {
+        width: 100px;
+        margin-left: 10px;
+    }
 }
 </style>
