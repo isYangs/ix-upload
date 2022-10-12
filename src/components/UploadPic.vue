@@ -46,7 +46,11 @@
                 ></el-option>
             </el-select>
         </div>
-        <FileList :fileData="fileData" :permissionValue="permissionValue" />
+        <FileList
+            :fileData="fileData"
+            :permissionValue="permissionValue"
+            ref="fileList"
+        />
     </div>
 </template>
 
@@ -86,6 +90,8 @@ export default {
                 },
             ],
             permissionValue: 0,
+            uploadResultAll: [],
+            linksAll: [],
         };
     },
     methods: {
@@ -153,12 +159,29 @@ export default {
                         permission: this.permissionValue,
                     })
                     .then(res => {
-                        console.log(res);
+                        this.uploadResultAll.push(res.data);
+                        this.uploadDataAll();
+                        this.$refs.fileList.links = this.linksAll;
                         loadingInstance.close();
                     });
             });
         },
         deleteAll() {},
+
+        uploadDataAll() {
+            const uplaodDataAll = [];
+            this.uploadResultAll.forEach(item => {
+                for (const key in item.links) {
+                    let data = {};
+                    data = {
+                        name: key,
+                        url: item.links[key],
+                    };
+                    uplaodDataAll.push(data);
+                }
+                this.linksAll.push(uplaodDataAll);
+            });
+        },
     },
     computed: {
         // 遍历文件类型

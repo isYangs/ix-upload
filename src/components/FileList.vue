@@ -56,7 +56,7 @@
             title="查看图片"
             :visible.sync="dialogVisible"
             v-if="dialogVisible"
-            width="45%"
+            width="50%"
         >
             <img :src="previewImage" alt="" />
         </el-dialog>
