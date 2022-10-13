@@ -166,7 +166,23 @@ export default {
                     });
             });
         },
-        deleteAll() {},
+        deleteAll() {
+            this.$confirm('此操作将永久清空所有文件, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            })
+                .then(() => {
+                    this.fileData.splice(0, this.fileData.length);
+                    this.$message({
+                        type: 'success',
+                        message: '清空成功!',
+                        duration: 2000,
+                        center: true,
+                    });
+                })
+                .catch(e => e);
+        },
 
         uploadDataAll() {
             const uplaodDataAll = [];
